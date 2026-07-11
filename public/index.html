@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>متجر التسويق الإلكتروني</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 32px;
+            font-weight: bold;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .login-form, .register-form {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 400px;
+            margin: 100px auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        input {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+        
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .product-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            transition: 0.3s;
+            cursor: pointer;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        }
+        
+        .product-image {
+            width: 100%;
+            height: 200px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        
+        .product-name {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .product-price {
+            font-size: 24px;
+            color: #667eea;
+            font-weight: bold;
+        }
+        
+        .product-description {
+            color: #666;
+            margin-top: 10px;
+            line-height: 1.6;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 30px;
+        }
+        
+        .pagination button {
+            width: auto;
+            padding: 10px 20px;
+        }
+        
+        .error {
+            color: #ff4444;
+            margin-top: 10px;
+            text-align: center;
+        }
+        
+        .success {
+            color: #00C851;
+            margin-top: 10px;
+            text-align: center;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 50px;
+            font-size: 20px;
+            color: white;
+        }
+        
+        .user-profile {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Login Screen -->
+        <div id="loginScreen">
+            <div class="login-form">
+                <h2 style="text-align: center; margin-bottom: 20px; color: #667eea;">تسجيل الدخول</h2>
+                <input type="text" id="username" placeholder="اسم المستخدم">
+                <input type="password" id="password" placeholder="كلمة المرور">
+                <button onclick="login()">دخول</button>
+                <div id="loginError" class="error"></div>
+                <div style="text-align: center; margin-top: 15px; color: #666;">
+                    <small>لأغراض التدريب: admin/admin123</small>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Application -->
+        <div id="mainApp" class="hidden">
+            <div class="header">
+                <div class="logo">🛍️ متجر التسويق</div>
+                <div class="user-info">
+                    <span id="welcomeMessage"></span>
+                    <button onclick="logout()" style="width: auto; padding: 10px 20px;">تسجيل الخروج</button>
+                </div>
+            </div>
+            
+            <div id="productsContainer">
+                <h2 style="color: white; margin-bottom: 20px;">المنتجات المتاحة</h2>
+                <div id="productsGrid" class="products-grid"></div>
+                <div id="pagination" class="pagination"></div>
+            </div>
+            
+            <!-- User Profile Link -->
+            <div style="text-align: center; margin-top: 20px;">
+                <button onclick="viewOtherProfile()" style="width: auto; padding: 15px 30px;">
+                    🔍 عرض ملف مستخدم آخر (لاختبار IDOR)
+                </button>
+            </div>
+            
+            <div id="profileSection" class="hidden user-profile">
+                <h3>معلومات المستخدم</h3>
+                <div id="profileInfo"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let currentPage = 1;
+        let totalPages = 1;
+        
+        // Check authentication on page load
+        async function checkAuth() {
+            try {
+                const response = await fetch('/api/check-auth');
+                const data = await response.json();
+                
+                if (data.authenticated) {
+                    document.getElementById('loginScreen').classList.add('hidden');
+                    document.getElementById('mainApp').classList.remove('hidden');
+                    document.getElementById('welcomeMessage').textContent = 
+                        `مرحباً ${data.user.username} (${data.user.role})`;
+                    loadProducts(1);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+        
+        // Login function
+        async function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    document.getElementById('loginScreen').classList.add('hidden');
+                    document.getElementById('mainApp').classList.remove('hidden');
+                    document.getElementById('welcomeMessage').textContent = 
+                        `مرحباً ${data.user.username} (${data.user.role})`;
+                    loadProducts(1);
+                } else {
+                    document.getElementById('loginError').textContent = data.message;
+                }
+            } catch (error) {
+                document.getElementById('loginError').textContent = 'خطأ في الاتصال';
+            }
+        }
+        
+        // Load products
+        async function loadProducts(page) {
+            const grid = document.getElementById('productsGrid');
+            grid.innerHTML = '<div class="loading">جاري تحميل المنتجات...</div>';
+            
+            try {
+                const response = await fetch(`/api/products?page=${page}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    grid.innerHTML = '';
+                    totalPages = data.pages;
+                    currentPage = data.currentPage;
+                    
+                    data.products.forEach(product => {
+                        const card = document.createElement('div');
+                        card.className = 'product-card';
+                        card.innerHTML = `
+                            <div class="product-image">📦</div>
+                            <div class="product-name">${product.name}</div>
+                            <div class="product-price">$${product.price}</div>
+                            <div class="product-description">${product.description}</div>
+                            <div style="margin-top: 10px; color: #999; font-size: 12px;">ID: ${product.id}</div>
+                        `;
+                        grid.appendChild(card);
+                    });
+                    
+                    updatePagination();
+                }
+            } catch (error) {
+                grid.innerHTML = '<div class="error">خطأ في تحميل المنتجات</div>';
+            }
+        }
+        
+        // Update pagination
+        function updatePagination() {
+            const pagination = document.getElementById('pagination');
+            pagination.innerHTML = '';
+            
+            for (let i = 1; i <= totalPages; i++) {
+                const button = document.createElement('button');
+                button.textContent = i;
+                button.style.width = 'auto';
+                button.style.padding = '10px 15px';
+                
+                if (i === currentPage) {
+                    button.style.background = '#764ba2';
+                }
+                
+                button.onclick = () => loadProducts(i);
+                pagination.appendChild(button);
+            }
+        }
+        
+        // View other user's profile (IDOR testing)
+        async function viewOtherProfile() {
+            const userId = prompt('أدخل رقم المستخدم الذي تريد عرض ملفه (1-3):');
+            if (userId) {
+                try {
+                    const response = await fetch(`/api/user/${userId}`);
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        const profileSection = document.getElementById('profileSection');
+                        const profileInfo = document.getElementById('profileInfo');
+                        profileSection.classList.remove('hidden');
+                        
+                        profileInfo.innerHTML = `
+                            <p><strong>اسم المستخدم:</strong> ${data.user.username}</p>
+                            <p><strong>البريد الإلكتروني:</strong> ${data.user.email}</p>
+                            <p><strong>الدور:</strong> ${data.user.role}</p>
+                            <p><strong>معرف المستخدم:</strong> ${data.user.id}</p>
+                            <!-- Hidden password for testing -->
+                            <input type="hidden" id="hiddenPassword" value="${data.user.password}">
+                        `;
+                        
+                        // Show update form
+                        profileInfo.innerHTML += `
+                            <div style="margin-top: 20px;">
+                                <h4>تحديث البريد الإلكتروني</h4>
+                                <input type="email" id="newEmail" value="${data.user.email}">
+                                <button onclick="updateUserEmail(${data.user.id})">تحديث</button>
+                            </div>
+                        `;
+                    }
+                } catch (error) {
+                    alert('خطأ في جلب معلومات المستخدم');
+                }
+            }
+        }
+        
+        // Update user email
+        async function updateUserEmail(userId) {
+            const newEmail = document.getElementById('newEmail').value;
+            try {
+                const response = await fetch(`/api/user/${userId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email: newEmail })
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    alert('تم تحديث البريد الإلكتروني بنجاح');
+                }
+            } catch (error) {
+                alert('خطأ في التحديث');
+            }
+        }
+        
+        // Logout
+        async function logout() {
+            try {
+                await fetch('/api/logout', { method: 'POST' });
+                document.getElementById('mainApp').classList.add('hidden');
+                document.getElementById('loginScreen').classList.remove('hidden');
+                document.getElementById('username').value = '';
+                document.getElementById('password').value = '';
+                document.getElementById('loginError').textContent = '';
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+        
+        // Initialize
+        checkAuth();
+    </script>
+</body>
+</html>
